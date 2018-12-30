@@ -14,7 +14,7 @@ export class Player {
     this.room = null
 
     /* Join lobby */
-    this.joinRoom(RoomList.getLobby())
+    this.changeRoom(RoomList.getLobby())
 
     /* Socket event handler */
     this.socket.on('changePlayerName', (name: string) => {
@@ -39,29 +39,19 @@ export class Player {
     return this.socket.id
   }
 
-  leaveRoom () {
-    if (isNull(this.room)) {
-      return
-    }
-
-    this.socket.leave(ROOM_PREFIX + this.room.id)
-    this.room.leave(this)
-    this.room = null
-  }
-
-  joinRoom (room: Room) {
-    if (!room.join(this)) {
-      return
-    }
-    this.room = room
-    this.socket.join(ROOM_PREFIX + room.id)
-  }
-
   changeRoom (room: Room | null) {
-    this.leaveRoom()
+    if (!isNull(this.room)) {
+      this.socket.leave(ROOM_PREFIX + this.room.id)
+      this.room.leave(this)
+      this.room = null
+    }
 
     if (!isNull(room)) {
-      this.joinRoom(room)
+      if (!room.join(this)) {
+        return
+      }
+      this.room = room
+      this.socket.join(ROOM_PREFIX + room.id)
     }
   }
 }
@@ -88,12 +78,13 @@ export namespace PlayerList {
   }
 
   export function removePlayer (player: Player) {
+    player.changeRoom(null)
+
     const index = PlayerList.findIndex(x => x.getID() === player.getID())
     if (index < 0) {
       return
     }
 
     PlayerList.splice(index, 1)
-    player.leaveRoom()
   }
 }
