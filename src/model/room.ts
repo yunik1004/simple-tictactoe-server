@@ -1,6 +1,6 @@
 import { isUndefined } from 'util'
 import shortid from 'shortid'
-import { LOBBY } from '../constants'
+import { LOBBY, ROOM_PREFIX } from '../constants'
 import { Player } from './player'
 
 export class Room {
@@ -16,6 +16,10 @@ export class Room {
 
   numPlayers (): number {
     return this.players.length
+  }
+
+  getSocketIORoomName (): string {
+    return ROOM_PREFIX + this.id
   }
 
   /* Should be called from player */

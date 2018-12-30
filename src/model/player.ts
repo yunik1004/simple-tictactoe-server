@@ -1,6 +1,5 @@
 import { isUndefined, isNull } from 'util'
 import SocketIO from 'socket.io'
-import { ROOM_PREFIX } from '../constants'
 import { Room, RoomList } from './room'
 
 export class Player {
@@ -41,7 +40,7 @@ export class Player {
 
   changeRoom (room: Room | null) {
     if (!isNull(this.room)) {
-      this.socket.leave(ROOM_PREFIX + this.room.id)
+      this.socket.leave(this.room.getSocketIORoomName())
       this.room.leave(this)
       this.room = null
     }
@@ -51,7 +50,7 @@ export class Player {
         return
       }
       this.room = room
-      this.socket.join(ROOM_PREFIX + room.id)
+      this.socket.join(this.room.getSocketIORoomName())
     }
   }
 }
