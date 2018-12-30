@@ -18,16 +18,17 @@ export class Room {
     return this.players.length
   }
 
+  /* Should be called from player */
   join (player: Player): boolean {
     if (!isUndefined(this.players.find(x => x.getID() === player.getID()))) {
       return false
     }
 
     this.players.push(player)
-    player.changeRoom(this)
     return true
   }
 
+  /* Should be called from player */
   leave (player: Player) {
     const index = this.players.findIndex(x => x.getID() === player.getID())
     if (index < 0) {
@@ -35,7 +36,6 @@ export class Room {
     }
 
     this.players.splice(index, 1)
-    player.leaveRoom()
   }
 }
 

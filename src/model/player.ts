@@ -22,7 +22,7 @@ export class Player {
     })
 
     this.socket.on('createRoom', (name: string) => {
-      const room = RoomList.addRoom(name)
+      const room: Room = RoomList.addRoom(name)
       this.changeRoom(room)
     })
 
@@ -31,21 +31,12 @@ export class Player {
       if (isNull(room)) {
         return
       }
-
       this.changeRoom(room)
     })
   }
 
   getID (): string {
     return this.socket.id
-  }
-
-  getSocket (): SocketIO.Socket {
-    return this.socket
-  }
-
-  getRoom (): Room | null {
-    return this.room
   }
 
   leaveRoom () {
@@ -55,10 +46,14 @@ export class Player {
 
     this.socket.leave(ROOM_PREFIX + this.room.id)
     this.room.leave(this)
+    this.room = null
   }
 
   joinRoom (room: Room) {
-    room.join(this)
+    if (!room.join(this)) {
+      return
+    }
+    this.room = room
     this.socket.join(ROOM_PREFIX + room.id)
   }
 
@@ -68,10 +63,6 @@ export class Player {
     if (!isNull(room)) {
       this.joinRoom(room)
     }
-  }
-
-  endGame () {
-    PlayerList.removePlayer(this)
   }
 }
 
