@@ -1,5 +1,6 @@
 import { isUndefined, isNull } from 'util'
 import SocketIO from 'socket.io'
+import { sprintf } from 'sprintf-js'
 import { Room, RoomList } from './room'
 
 export class Player {
@@ -73,6 +74,8 @@ export namespace PlayerList {
   export function addPlayer (socket: SocketIO.Socket): Player {
     const player = new Player(socket)
     PlayerList.push(player)
+
+    console.log(sprintf('Client connected: %s', player.getID()))
     return player
   }
 
@@ -85,5 +88,7 @@ export namespace PlayerList {
     }
 
     PlayerList.splice(index, 1)
+
+    console.log(sprintf('Client disconnected: %s', player.getID()))
   }
 }

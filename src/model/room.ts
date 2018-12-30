@@ -1,5 +1,6 @@
 import { isUndefined } from 'util'
 import shortid from 'shortid'
+import { sprintf } from 'sprintf-js'
 import { LOBBY, ROOM_PREFIX } from '../constants'
 import { Player } from './player'
 
@@ -12,6 +13,7 @@ export class Room {
     this.id = shortid.generate()
     this.name = name
     this.players = new Array()
+    console.log(sprintf('Room created: %s (%s)', this.id, this.name))
   }
 
   numPlayers (): number {

@@ -2,8 +2,12 @@
   "name": "simple-tictactoe-server",
   "version": "1.0.0",
   "description": "NodeJS/Socket.io server for simple tictactoe game",
-  "repository:": "https://github.com/yunik1004/simple-tictactoe-server",
-  "main": "index.js",
+  "private": true,
+  "repository:": {
+    "type": "git",
+    "url": "git://github.com/yunik1004/simple-tictactoe-server.git"
+  },
+  "main": "src/app.ts",
   "scripts": {
     "start": "tsc && node dist/app",
     "dev": "nodemon",
@@ -15,13 +19,15 @@
   "dependencies": {
     "koa": "^2.6.2",
     "shortid": "^2.2.14",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
     "@types/koa": "^2.0.47",
     "@types/node": "^10.12.18",
     "@types/shortid": "0.0.29",
     "@types/socket.io": "^2.1.2",
+    "@types/sprintf-js": "^1.1.1",
     "nodemon": "^1.18.9",
     "ts-node": "^7.0.1",
     "tslint": "^5.12.0",
