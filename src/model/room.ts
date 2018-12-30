@@ -1,17 +1,17 @@
 import { isUndefined } from 'util'
+import shortid from 'shortid'
+import { LOBBY } from '../constants'
 import { Player } from './player'
 
 export class Room {
-  static numRoom: number = 0
-
-  readonly id: number
+  readonly id: string
   readonly name: string
   private players: Array<Player>
 
   constructor (name: string) {
-    this.id = Room.numRoom++
+    this.id = shortid.generate()
     this.name = name
-    this.players = new Array(0)
+    this.players = new Array()
   }
 
   numPlayers (): number {
@@ -19,19 +19,35 @@ export class Room {
   }
 
   join (player: Player): boolean {
-    if (!isUndefined(this.players.find(x => x.id === player.id))) {
+    if (!isUndefined(this.players.find(x => x.getID() === player.getID()))) {
       return false
     }
 
     this.players.push(player)
+    player.changeRoom(this)
     return true
+  }
+
+  leave (player: Player) {
+    const index = this.players.findIndex(x => x.getID() === player.getID())
+    if (index < 0) {
+      return
+    }
+
+    this.players.splice(index, 1)
+    player.leaveRoom()
   }
 }
 
 export namespace RoomList {
-  const RoomList: Array<Room> = new Array(0)
+  const RoomList: Array<Room> = new Array()
+  RoomList.push(new Room(LOBBY))
 
-  export function getRoom (id: number): Room | null {
+  export function getLobby (): Room {
+    return RoomList[0]
+  }
+
+  export function getRoom (id: string): Room | null {
     const room = RoomList.find(x => x.id === id)
     if (isUndefined(room)) {
       return null

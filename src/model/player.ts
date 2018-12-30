@@ -1,22 +1,85 @@
-import { isUndefined } from 'util'
+import { isUndefined, isNull } from 'util'
+import SocketIO from 'socket.io'
+import { ROOM_PREFIX } from '../constants'
+import { Room, RoomList } from './room'
 
 export class Player {
-  static numPlayer: number = 0
+  private socket: SocketIO.Socket
+  private name: string
+  private room: Room | null
 
-  readonly id: number
-  readonly name: string
+  constructor (socket: SocketIO.Socket) {
+    this.socket = socket
+    this.name = this.socket.id
+    this.room = null
 
-  constructor (name: string) {
-    this.id = Player.numPlayer++
-    this.name = name
+    /* Join lobby */
+    this.joinRoom(RoomList.getLobby())
+
+    /* Socket event handler */
+    this.socket.on('changePlayerName', (name: string) => {
+      this.name = name
+    })
+
+    this.socket.on('createRoom', (name: string) => {
+      const room = RoomList.addRoom(name)
+      this.changeRoom(room)
+    })
+
+    this.socket.on('changeRoom', (id: string) => {
+      const room = RoomList.getRoom(id)
+      if (isNull(room)) {
+        return
+      }
+
+      this.changeRoom(room)
+    })
+  }
+
+  getID (): string {
+    return this.socket.id
+  }
+
+  getSocket (): SocketIO.Socket {
+    return this.socket
+  }
+
+  getRoom (): Room | null {
+    return this.room
+  }
+
+  leaveRoom () {
+    if (isNull(this.room)) {
+      return
+    }
+
+    this.socket.leave(ROOM_PREFIX + this.room.id)
+    this.room.leave(this)
+  }
+
+  joinRoom (room: Room) {
+    room.join(this)
+    this.socket.join(ROOM_PREFIX + room.id)
+  }
+
+  changeRoom (room: Room | null) {
+    this.leaveRoom()
+
+    if (!isNull(room)) {
+      this.joinRoom(room)
+    }
+  }
+
+  endGame () {
+    PlayerList.removePlayer(this)
   }
 }
 
 export namespace PlayerList {
-  const PlayerList: Array<Player> = new Array(0)
+  const PlayerList: Array<Player> = new Array()
 
-  export function getPlayer (id: number): Player | null {
-    const player = PlayerList.find(x => x.id === id)
+  export function getPlayer (id: string): Player | null {
+    const player = PlayerList.find(x => x.getID() === id)
     if (isUndefined(player)) {
       return null
     }
@@ -27,9 +90,19 @@ export namespace PlayerList {
     return PlayerList
   }
 
-  export function addPlayer (name: string): Player {
-    const player = new Player(name)
+  export function addPlayer (socket: SocketIO.Socket): Player {
+    const player = new Player(socket)
     PlayerList.push(player)
     return player
+  }
+
+  export function removePlayer (player: Player) {
+    const index = PlayerList.findIndex(x => x.getID() === player.getID())
+    if (index < 0) {
+      return
+    }
+
+    PlayerList.splice(index, 1)
+    player.leaveRoom()
   }
 }
