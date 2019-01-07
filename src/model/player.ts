@@ -32,6 +32,7 @@ export class Player {
         return
       }
       this.changeRoom(room)
+      // If fail to change room, then alert to client
     })
   }
 
@@ -43,7 +44,7 @@ export class Player {
     return this.name
   }
 
-  changeRoom (room: Room | null) {
+  changeRoom (room: Room | null): boolean {
     if (!isNull(this.room)) {
       this.socket.leave(this.room.getSocketIORoomName())
       this.room.leave(this)
@@ -52,11 +53,13 @@ export class Player {
 
     if (!isNull(room)) {
       if (!room.join(this)) {
-        return
+        return false
       }
       this.room = room
       this.socket.join(this.room.getSocketIORoomName())
     }
+
+    return true
   }
 }
 
