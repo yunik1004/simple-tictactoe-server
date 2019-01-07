@@ -39,6 +39,10 @@ export class Player {
     return this.socket.id
   }
 
+  getName (): string {
+    return this.name
+  }
+
   changeRoom (room: Room | null) {
     if (!isNull(this.room)) {
       this.socket.leave(this.room.getSocketIORoomName())
