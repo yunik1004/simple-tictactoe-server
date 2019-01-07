@@ -2,17 +2,20 @@ import { isUndefined } from 'util'
 import shortid from 'shortid'
 import { sprintf } from 'sprintf-js'
 import { LOBBY, ROOM_PREFIX } from '../constants'
+import { Board } from './play'
 import { Player } from './player'
 
 export class Room {
   readonly id: string
   readonly name: string
   private players: Array<Player>
+  private board: Board
 
   constructor (name: string) {
     this.id = shortid.generate()
     this.name = name
     this.players = new Array()
+    this.board = new Board()
     console.log(sprintf('Room created: %s (%s)', this.id, this.name))
   }
 
@@ -42,6 +45,10 @@ export class Room {
     }
 
     this.players.splice(index, 1)
+  }
+
+  startGame () {
+    this.board.initialize()
   }
 }
 

@@ -15,12 +15,19 @@ export type Play = {
 }
 
 export class Board {
-  readonly size: BoardPosition
+  private size: BoardPosition
   private board: number[][]
   private log: Array<LogEntry>
   private turn: number
 
-  constructor (size: BoardPosition = [3, 3]) {
+  constructor () {
+    this.size = [-1, -1]
+    this.board = new Array()
+    this.log = new Array()
+    this.turn = -1
+  }
+
+  initialize (size: BoardPosition = [3, 3]) {
     this.size = size
     this.board = new Array()
     for (let i = 0; i < this.size[0]; i++) {
