@@ -1,4 +1,4 @@
-import { isUndefined } from 'util'
+import { isUndefined, isNull } from 'util'
 import shortid from 'shortid'
 import { sprintf } from 'sprintf-js'
 import { LOBBY, ROOM_PREFIX } from '../constants'
@@ -24,12 +24,20 @@ export class Room {
     console.log(sprintf('Room created: %s (%s)', this.id, this.name))
   }
 
-  numPlayers (): number {
+  getNumPlayers (): number {
     return this.players.length
   }
 
   getSocketIORoomName (): string {
     return ROOM_PREFIX + this.id
+  }
+
+  getPlayerWithTeam (player: Player): PlayerWithTeam | null {
+    const pwt = this.players.find(x => x.player.getID() === player.getID())
+    if (isUndefined(pwt)) {
+      return null
+    }
+    return pwt
   }
 
   /* Should be called from player */
@@ -56,8 +64,19 @@ export class Room {
     this.board.initialize()
   }
 
-  addPlay (playerWithTeam: PlayerWithTeam, pos: BoardPosition): boolean {
-    return this.board.addPlay(playerWithTeam.player, pos, playerWithTeam.team)
+  changeTeam (player: Player, team: Mark) {
+    const pwt = this.getPlayerWithTeam(player)
+    if (!isNull(pwt)) {
+      pwt.team = team
+    }
+  }
+
+  addPlay (player: Player, pos: BoardPosition): boolean {
+    const pwt = this.getPlayerWithTeam(player)
+    if (isNull(pwt)) {
+      return false
+    }
+    return this.board.addPlay(pwt.player, pos, pwt.team)
   }
 }
 

@@ -39,12 +39,27 @@ export class Board {
     this.turn = 1
   }
 
+  getBoard (): number[][] {
+    return this.board
+  }
+
   getLog (): Array<LogEntry> {
     return this.log
   }
 
+  getNextOrder (): Mark {
+    if (this.turn % 2 === 1) {
+      return Mark.O
+    } else {
+      return Mark.X
+    }
+  }
+
   addPlay (player: Player, pos: BoardPosition, team: Mark): boolean {
     // Check that it is player's turn
+    if (this.getNextOrder() !== team) {
+      return false
+    }
 
     // Check whether play is correct
     for (let i = 0; i < 2; i++) {
