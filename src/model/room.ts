@@ -2,13 +2,18 @@ import { isUndefined } from 'util'
 import shortid from 'shortid'
 import { sprintf } from 'sprintf-js'
 import { LOBBY, ROOM_PREFIX } from '../constants'
-import { Board } from './play'
+import { Board, BoardPosition, Mark } from './play'
 import { Player } from './player'
+
+type PlayerWithTeam = {
+  player: Player,
+  team: Mark
+}
 
 export class Room {
   readonly id: string
   readonly name: string
-  private players: Array<Player>
+  private players: Array<PlayerWithTeam>
   private board: Board
 
   constructor (name: string) {
@@ -29,17 +34,17 @@ export class Room {
 
   /* Should be called from player */
   join (player: Player): boolean {
-    if (!isUndefined(this.players.find(x => x.getID() === player.getID()))) {
+    if (!isUndefined(this.players.find(x => x.player.getID() === player.getID()))) {
       return false
     }
 
-    this.players.push(player)
+    this.players.push({ player: player, team: Mark.Empty })
     return true
   }
 
   /* Should be called from player */
   leave (player: Player) {
-    const index = this.players.findIndex(x => x.getID() === player.getID())
+    const index = this.players.findIndex(x => x.player.getID() === player.getID())
     if (index < 0) {
       return
     }
@@ -49,6 +54,10 @@ export class Room {
 
   startGame () {
     this.board.initialize()
+  }
+
+  addPlay (playerWithTeam: PlayerWithTeam, pos: BoardPosition): boolean {
+    return this.board.addPlay(playerWithTeam.player, pos, playerWithTeam.team)
   }
 }
 

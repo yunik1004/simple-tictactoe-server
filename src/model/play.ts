@@ -43,19 +43,26 @@ export class Board {
     return this.log
   }
 
-  addPlay (player: Player, play: Play): boolean {
+  addPlay (player: Player, pos: BoardPosition, team: Mark): boolean {
     // Check that it is player's turn
 
     // Check whether play is correct
     for (let i = 0; i < 2; i++) {
-      if (play.pos[i] < 0 || play.pos[i] >= this.size[i]) {
+      if (pos[i] < 0 || pos[i] >= this.size[i]) {
         return false
       }
     }
 
-    this.board[play.pos[0]][play.pos[1]] = play.mark
+    // If not empty position
+    if (this.board[pos[0]][pos[1]] !== Mark.Empty) {
+      return false
+    }
 
-    this.log.push(new LogEntry(this.turn++, player, play))
+    const newPlay: Play = { pos: pos, mark: team }
+
+    this.board[pos[0]][pos[1]] = newPlay.mark
+
+    this.log.push(new LogEntry(this.turn++, player, newPlay))
     return true
   }
 }
