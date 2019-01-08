@@ -1,4 +1,4 @@
-import { isUndefined, isNull } from 'util'
+import { isUndefined, isNull } from '../utils/checktypes'
 import shortid from 'shortid'
 import { sprintf } from 'sprintf-js'
 import { LOBBY, ROOM_PREFIX } from '../constants'
