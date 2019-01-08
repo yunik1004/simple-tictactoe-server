@@ -3,16 +3,12 @@ import { TESTPORT_PLAYER, TESTURI } from '../constants'
 import { RoomList } from '../../src/model/room'
 import { server } from '../../src/app'
 
-beforeEach((done) => {
-  server.listen(TESTPORT_PLAYER, () => {
-    done()
-  })
+beforeEach(async () => {
+  await server.listen(TESTPORT_PLAYER)
 })
 
-afterEach((done) => {
-  server.close(() => {
-    done()
-  })
+afterEach(async () => {
+  await server.close()
 })
 
 describe('Player Test', () => {
