@@ -40,6 +40,10 @@ export class Room {
     return pwt
   }
 
+  isLobby (): boolean {
+    return this.id === RoomList.getLobby().id
+  }
+
   /* Should be called from player */
   join (player: Player): boolean {
     if (!isUndefined(this.players.find(x => x.player.getID() === player.getID()))) {

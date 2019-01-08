@@ -1,6 +1,7 @@
 import { isUndefined, isNull } from 'util'
 import SocketIO from 'socket.io'
 import { sprintf } from 'sprintf-js'
+import { Mark } from './play'
 import { Room, RoomList } from './room'
 
 export class Player {
@@ -23,16 +24,39 @@ export class Player {
 
     this.socket.on('createRoom', (name: string) => {
       const room: Room = RoomList.addRoom(name)
-      this.changeRoom(room)
-    })
-
-    this.socket.on('changeRoom', (id: string) => {
-      const room = RoomList.getRoom(id)
-      if (isNull(room)) {
+      if (!this.changeRoom(room)) {
+        this.socket.emit('createRoomFail')
         return
       }
-      this.changeRoom(room)
+      this.socket.emit('createRoomSuccess', room.id)
+    })
+
+    this.socket.on('joinRoom', (id: string) => {
+      const room = RoomList.getRoom(id)
+
       // If fail to change room, then alert to client
+      if (isNull(this.room) || !this.room.isLobby() || isNull(room) || !this.changeRoom(room)) {
+        this.socket.emit('joinRoomFail')
+        return
+      }
+      this.socket.emit('joinRoomSuccess')
+    })
+
+    this.socket.on('leaveRoom', () => {
+      if (isNull(this.room) || this.room.isLobby() || !this.changeRoom(RoomList.getLobby())) {
+        this.socket.emit('leaveRoomFail')
+        return
+      }
+      this.socket.emit('leaveRoomSuccess')
+    })
+
+    this.socket.on('changeTeam', (team: Mark) => {
+      if (isNull(this.room) || this.room.isLobby()) {
+        this.socket.emit('changeTeamFail')
+        return
+      }
+      this.room.changeTeam(this, team)
+      this.socket.emit('changeTeamSuccess')
     })
   }
 

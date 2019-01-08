@@ -4,9 +4,9 @@ import { Player } from './player'
 export type BoardPosition = [number, number]
 
 export enum Mark {
-  Empty,
-  O,
-  X
+  Empty = -1,
+  O = 0,
+  X = 1
 }
 
 export type Play = {
