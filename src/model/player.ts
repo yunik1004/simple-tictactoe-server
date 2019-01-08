@@ -1,4 +1,3 @@
-import { isUndefined, isNull } from '../utils/checktypes'
 import SocketIO from 'socket.io'
 import { sprintf } from 'sprintf-js'
 import { Mark } from './play'
@@ -23,7 +22,7 @@ export class Player {
     })
 
     this.socket.on('createRoom', (name: string) => {
-      if (isNull(this.room) || !this.room.isLobby()) {
+      if (this.room === null || !this.room.isLobby()) {
         this.socket.emit('createRoomFail')
         return
       }
@@ -40,7 +39,7 @@ export class Player {
       const room = RoomList.getRoom(id)
 
       // If fail to change room, then alert to client
-      if (isNull(this.room) || !this.room.isLobby() || isNull(room) || !this.changeRoom(room)) {
+      if (this.room === null || !this.room.isLobby() || room === null || !this.changeRoom(room)) {
         this.socket.emit('joinRoomFail')
         return
       }
@@ -48,7 +47,7 @@ export class Player {
     })
 
     this.socket.on('leaveRoom', () => {
-      if (isNull(this.room) || this.room.isLobby() || !this.changeRoom(RoomList.getLobby())) {
+      if (this.room === null || this.room.isLobby() || !this.changeRoom(RoomList.getLobby())) {
         this.socket.emit('leaveRoomFail')
         return
       }
@@ -60,7 +59,7 @@ export class Player {
     })
 
     this.socket.on('getPlayerList', () => {
-      if (isNull(this.room)) {
+      if (this.room === null) {
         this.socket.emit('getPlayerListFail')
         return
       }
@@ -68,7 +67,7 @@ export class Player {
     })
 
     this.socket.on('changeTeam', (team: Mark) => {
-      if (isNull(this.room) || this.room.isLobby()) {
+      if (this.room === null || this.room.isLobby()) {
         this.socket.emit('changeTeamFail')
         return
       }
@@ -86,13 +85,13 @@ export class Player {
   }
 
   changeRoom (room: Room | null): boolean {
-    if (!isNull(this.room)) {
+    if (this.room !== null) {
       this.socket.leave(this.room.getSocketIORoomName())
       this.room.leave(this)
       this.room = null
     }
 
-    if (!isNull(room)) {
+    if (room !== null) {
       if (!room.join(this)) {
         return false
       }
@@ -109,7 +108,7 @@ export namespace PlayerList {
 
   export function getPlayer (id: string): Player | null {
     const player = PlayerList.find(x => x.getID() === id)
-    if (isUndefined(player)) {
+    if (player === undefined) {
       return null
     }
     return player

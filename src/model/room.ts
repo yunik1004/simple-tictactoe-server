@@ -1,4 +1,3 @@
-import { isUndefined, isNull } from '../utils/checktypes'
 import shortid from 'shortid'
 import { sprintf } from 'sprintf-js'
 import { LOBBY, ROOM_PREFIX } from '../constants'
@@ -44,7 +43,7 @@ export class Room {
 
   getPlayerWithTeam (player: Player): PlayerWithTeam | null {
     const pwt = this.players.find(x => x.player.getID() === player.getID())
-    if (isUndefined(pwt)) {
+    if (pwt === undefined) {
       return null
     }
     return pwt
@@ -56,7 +55,7 @@ export class Room {
 
   /* Should be called from player */
   join (player: Player): boolean {
-    if (!isUndefined(this.players.find(x => x.player.getID() === player.getID()))) {
+    if (this.players.find(x => x.player.getID() === player.getID()) !== undefined) {
       return false
     }
 
@@ -84,14 +83,14 @@ export class Room {
 
   changeTeam (player: Player, team: Mark) {
     const pwt = this.getPlayerWithTeam(player)
-    if (!isNull(pwt)) {
+    if (pwt !== null) {
       pwt.team = team
     }
   }
 
   addPlay (player: Player, pos: BoardPosition): boolean {
     const pwt = this.getPlayerWithTeam(player)
-    if (isNull(pwt)) {
+    if (pwt === null) {
       return false
     }
     return this.board.addPlay(pwt.player, pos, pwt.team)
@@ -112,7 +111,7 @@ export namespace RoomList {
 
   export function getRoom (id: string): Room | null {
     const room = RoomList.find(x => x.id === id)
-    if (isUndefined(room)) {
+    if (room === undefined) {
       return null
     }
     return room
