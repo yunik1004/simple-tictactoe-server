@@ -12,7 +12,7 @@
     "start": "tsc && node dist/index",
     "dev": "nodemon",
     "lint": "tslint -p .",
-    "test": "jest --detectOpenHandles"
+    "test": "jest --silent --detectOpenHandles"
   },
   "author": "yunik1004<inkyuhak@gmail.com>",
   "license": "ISC",

@@ -133,8 +133,12 @@ export namespace RoomList {
     return RoomList
   }
 
-  export function getRoomsJSON (): Array<SimpleRoom> {
-    return RoomList.map(function (room: Room) {
+  export function getRoomsWithoutLobby (): Array<Room> {
+    return RoomList.slice(1, RoomList.length)
+  }
+
+  export function getRoomsJSONWithoutLobby (): Array<SimpleRoom> {
+    return getRoomsWithoutLobby().map(function (room: Room) {
       return {
         id: room.id,
         name: room.name,

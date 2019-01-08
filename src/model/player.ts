@@ -55,7 +55,7 @@ export class Player {
     })
 
     this.socket.on('getRoomList', () => {
-      this.socket.emit('getRoomListSuccess', RoomList.getRoomsJSON())
+      this.socket.emit('getRoomListSuccess', RoomList.getRoomsJSONWithoutLobby())
     })
 
     this.socket.on('getPlayerList', () => {
