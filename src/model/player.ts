@@ -23,6 +23,11 @@ export class Player {
     })
 
     this.socket.on('createRoom', (name: string) => {
+      if (isNull(this.room) || !this.room.isLobby()) {
+        this.socket.emit('createRoomFail')
+        return
+      }
+
       const room: Room = RoomList.addRoom(name)
       if (!this.changeRoom(room)) {
         this.socket.emit('createRoomFail')
@@ -48,6 +53,18 @@ export class Player {
         return
       }
       this.socket.emit('leaveRoomSuccess')
+    })
+
+    this.socket.on('getRoomList', () => {
+      this.socket.emit('getRoomListSuccess', RoomList.getRoomsJSON())
+    })
+
+    this.socket.on('getPlayerList', () => {
+      if (isNull(this.room)) {
+        this.socket.emit('getPlayerListFail')
+        return
+      }
+      this.socket.emit('getPlayerListSuccess', this.room.getPlayerList())
     })
 
     this.socket.on('changeTeam', (team: Mark) => {

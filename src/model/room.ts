@@ -32,6 +32,16 @@ export class Room {
     return ROOM_PREFIX + this.id
   }
 
+  getPlayerList (): Object {
+    return this.players.map(function (pwt: PlayerWithTeam) {
+      return {
+        'id': pwt.player.getID(),
+        'name': pwt.player.getName(),
+        'team': pwt.team
+      }
+    })
+  }
+
   getPlayerWithTeam (player: Player): PlayerWithTeam | null {
     const pwt = this.players.find(x => x.player.getID() === player.getID())
     if (isUndefined(pwt)) {
@@ -62,6 +72,10 @@ export class Room {
     }
 
     this.players.splice(index, 1)
+
+    if (!RoomList.isLobby(this) && this.getNumPlayers() <= 0) {
+      RoomList.removeRoom(this)
+    }
   }
 
   startGame () {
@@ -92,6 +106,10 @@ export namespace RoomList {
     return RoomList[0]
   }
 
+  export function isLobby (room: Room): boolean {
+    return getLobby().id === room.id
+  }
+
   export function getRoom (id: string): Room | null {
     const room = RoomList.find(x => x.id === id)
     if (isUndefined(room)) {
@@ -104,9 +122,27 @@ export namespace RoomList {
     return RoomList
   }
 
+  export function getRoomsJSON (): Object {
+    return RoomList.map(function (room: Room) {
+      return {
+        'id': room.id,
+        'name': room.name,
+        'numPlayers': room.getNumPlayers()
+      }
+    })
+  }
+
   export function addRoom (name: string): Room {
     const room = new Room(name)
     RoomList.push(room)
     return room
+  }
+
+  export function removeRoom (room: Room) {
+    const index = RoomList.findIndex(x => x.id === room.id)
+    if (index < 0) {
+      return
+    }
+    RoomList.splice(index, 1)
   }
 }
