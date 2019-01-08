@@ -1,17 +1,16 @@
-import http from 'http'
 import io from 'socket.io-client'
 import { server } from '../../src/app'
 import { TESTPORT } from '../../src/constants'
 
 const testURI = 'http://localhost:' + TESTPORT
 
-beforeAll((done) => {
+beforeEach((done) => {
   server.listen(TESTPORT, () => {
     done()
   })
 })
 
-afterAll((done) => {
+afterEach((done) => {
   server.close(() => {
     done()
   })
