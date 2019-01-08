@@ -9,6 +9,18 @@ type PlayerWithTeam = {
   team: Mark
 }
 
+export type SimplePlayerInRoom = {
+  id: string,
+  name: string,
+  team: Mark
+}
+
+export type SimpleRoom = {
+  id: string,
+  name: string,
+  numPlayers: number
+}
+
 export class Room {
   readonly id: string
   readonly name: string
@@ -31,12 +43,12 @@ export class Room {
     return ROOM_PREFIX + this.id
   }
 
-  getPlayerList (): Object {
+  getPlayersJSON (): Array<SimplePlayerInRoom> {
     return this.players.map(function (pwt: PlayerWithTeam) {
       return {
-        'id': pwt.player.getID(),
-        'name': pwt.player.getName(),
-        'team': pwt.team
+        id: pwt.player.getID(),
+        name: pwt.player.getName(),
+        team: pwt.team
       }
     })
   }
@@ -121,12 +133,12 @@ export namespace RoomList {
     return RoomList
   }
 
-  export function getRoomsJSON (): Object {
+  export function getRoomsJSON (): Array<SimpleRoom> {
     return RoomList.map(function (room: Room) {
       return {
-        'id': room.id,
-        'name': room.name,
-        'numPlayers': room.getNumPlayers()
+        id: room.id,
+        name: room.name,
+        numPlayers: room.getNumPlayers()
       }
     })
   }

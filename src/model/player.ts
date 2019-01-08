@@ -63,7 +63,7 @@ export class Player {
         this.socket.emit('getPlayerListFail')
         return
       }
-      this.socket.emit('getPlayerListSuccess', this.room.getPlayerList())
+      this.socket.emit('getPlayerListSuccess', this.room.getPlayersJSON())
     })
 
     this.socket.on('changeTeam', (team: Mark) => {
