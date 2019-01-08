@@ -4,12 +4,16 @@ import { RoomList } from '../../src/model/room'
 import { server } from '../../src/app'
 import { LOBBY } from '../../src/constants'
 
-beforeEach(async () => {
-  await server.listen(TESTPORT_ROOM)
+beforeEach((done) => {
+  server.listen(TESTPORT_ROOM, () => {
+    done()
+  })
 })
 
-afterEach(async () => {
-  await server.close()
+afterEach((done) => {
+  server.close(() => {
+    done()
+  })
 })
 
 describe('Room Test', () => {
