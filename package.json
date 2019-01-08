@@ -7,14 +7,14 @@
     "type": "git",
     "url": "git://github.com/yunik1004/simple-tictactoe-server.git"
   },
-  "main": "src/app.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "tsc && node dist/app",
+    "start": "tsc && node dist/index",
     "dev": "nodemon",
     "lint": "tslint -p .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --detectOpenHandles"
   },
-  "author": "yunik1004",
+  "author": "yunik1004<inkyuhak@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "koa": "^2.6.2",
@@ -23,12 +23,17 @@
     "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
-    "@types/koa": "^2.0.47",
+    "@types/jest": "^23.3.12",
+    "@types/koa": "^2.0.48",
     "@types/node": "^10.12.18",
     "@types/shortid": "0.0.29",
     "@types/socket.io": "^2.1.2",
+    "@types/socket.io-client": "^1.4.32",
     "@types/sprintf-js": "^1.1.1",
+    "jest": "^23.6.0",
     "nodemon": "^1.18.9",
+    "socket.io-client": "^2.2.0",
+    "ts-jest": "^23.10.5",
     "ts-node": "^7.0.1",
     "tslint": "^5.12.0",
     "tslint-config-standard": "^8.0.1",
